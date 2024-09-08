@@ -26,7 +26,7 @@ body {
   border-radius: 4px 0 0 4px;
 }
 
-.search-button {
+/* .search-button {
   padding: 10px 20px;
   font-size: 16px;
   background-color: #cd99b2;
@@ -44,14 +44,11 @@ body {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  position: absolute;
-  bottom: 480px;
-  left: 50%;
-  transform: translateX(-50%);
+
   
   
   
-}
+} */
 
 .search-button:hover {
   background-color: #0056b3;
@@ -128,10 +125,38 @@ body {
     border-radius: 5px 5px 5px 5px; 
   }
 
-.deleteButton{
+/* .deleteButton{
   background-color: #cd99b2;
   border-radius: 5px;
   border-color: #cd99b2;
   color: white;
   
+}
+
+.mostra-button{
+  background-color: #cd99b2;
+  border-radius: 5px;
+  border-color: #cd99b2;
+  color: white;
+  
+}
+
+.editButton{
+background-color: #cd99b2;
+border-radius: 5px;
+border-color: #cd99b2;
+color: white;
+
+} */
+
+button{
+  background-color: #cd99b2;
+border-radius: 5px;
+border-color: #cd99b2;
+color: white;
+
+}
+
+.modificaLibro{
+  color: white;
 }

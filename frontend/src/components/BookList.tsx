@@ -8,11 +8,18 @@ const BookList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<Book[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [title, setTitle] = useState<string>('');
-const [author, setAuthor] = useState<string>('');
-const [published_year, setPublished_year] = useState<number | null>(null);
-const [genre, setGenre] = useState<string | null>(null);
-const [stock, setStock] = useState<number | null>(null);
+  const [isInsertFormVisible, setIsInsertFormVisible] = useState(false);
+  const [isEditFormVisible, setIsEditFormVisible] = useState(false);
+  
+  const [newBook, setNewBook] = useState({
+    title: '',
+    author: '',
+    published_year: null as number | null,
+    genre: '' as string | null,
+    stock: null as number | null
+  });
+
+  const [editingBook, setEditingBook] = useState<Book | null>(null);
 
   useEffect(() => {
     fetchBooks();
@@ -40,28 +47,40 @@ const [stock, setStock] = useState<number | null>(null);
   const handleInsert = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log('Sending POST request to http://localhost:5000/books');
-      const response = await axios.post('http://localhost:5000/books', {
-        title,
-        author,
-        published_year,
-        genre,
-        stock
+      await axios.post('http://localhost:5000/books', newBook);
+      setNewBook({
+        title: '',
+        author: '',
+        published_year: null,
+        genre: '',
+        stock: null
       });
-      console.log('Risposta dal server:', response.data);
-      
-     
-      setTitle('');
-      setAuthor('');
-      setPublished_year(Number || null); 
-      setGenre('' || null);
-      setStock(Number || null); 
+      setIsInsertFormVisible(false);
+      fetchBooks();
     } catch (error) {
-      console.error('Errore nella creazione del libro:', error);
+      console.error('Errore nell\'inserimento del libro:', error);
     }
+  };
 
-    window.location.reload();
+  const handleEdit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editingBook) return;
+    try {
+      await axios.put(`http://localhost:5000/books/${editingBook.id}`, editingBook);
+      setIsEditFormVisible(false);
+      fetchBooks();
+    } catch (error) {
+      console.error('Errore nella modifica del libro:', error);
+    }
+  };
 
+  const toggleInsertForm = () => {
+    setIsInsertFormVisible(!isInsertFormVisible);
+  };
+
+  const openEditForm = (book: Book) => {
+    setEditingBook({...book});
+    setIsEditFormVisible(true);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +91,6 @@ const [stock, setStock] = useState<number | null>(null);
     }
   };
 
-
   const handleDelete = async (id: number) => {
     try {
       await axios.delete(`http://localhost:5000/books/${id}`);
@@ -81,6 +99,7 @@ const [stock, setStock] = useState<number | null>(null);
       console.error('Errore durante l\'eliminazione del libro:', error);
     }
   };
+
   const renderBooks = () => {
     const booksToRender = isSearching ? searchResults : books;
 
@@ -90,7 +109,6 @@ const [stock, setStock] = useState<number | null>(null);
 
     return (
       <ul className="books-grid">
-        
         {booksToRender.map((book) => (
           <li key={book.id} className="book-item">
             <h3>{book.title}</h3>
@@ -98,6 +116,7 @@ const [stock, setStock] = useState<number | null>(null);
             <p>Anno di pubblicazione: {book.published_year}</p>
             <p>Genere: {book.genre}</p>
             <p>Copie disponibili: {book.stock}</p>
+            <button className='editButton' onClick={() => openEditForm(book)}>Modifica</button>
             <button className='deleteButton' onClick={() => handleDelete(book.id)}>Elimina</button>
           </li>
         ))}
@@ -120,57 +139,101 @@ const [stock, setStock] = useState<number | null>(null);
         <button type="submit" className="search-button">Cerca</button>
       </form>
 
+      <button onClick={toggleInsertForm} className="mostra-button">
+        {isInsertFormVisible ? 'Nascondi' : 'Inserisci Nuovo Libro'}
+      </button>
 
+      {isInsertFormVisible && (
+        <form onSubmit={handleInsert} className="add-form">
+          <input
+            type="text"
+            value={newBook.title}
+            onChange={(e) => setNewBook({...newBook, title: e.target.value})}
+            placeholder="Title"
+            className="insertTitle"
+          /> 
+          <input
+            type="text"
+            value={newBook.author}
+            onChange={(e) => setNewBook({...newBook, author: e.target.value})}
+            placeholder="Author"
+            className="insertAuthor"
+          />
+          <input
+            type='number'
+            value={newBook.published_year ?? ''}
+            onChange={(e) => setNewBook({...newBook, published_year: Number(e.target.value)})}
+            placeholder="Published Year"
+            className="insertPublished_Year"
+          />
+          <input
+            type="text"
+            value={newBook.genre ?? ''}
+            onChange={(e) => setNewBook({...newBook, genre: e.target.value})}
+            placeholder="Genre"
+            className="insertGenre"
+          />
+          <input
+            type='number'
+            value={newBook.stock ?? ''}
+            onChange={(e) => setNewBook({...newBook, stock: Number(e.target.value)})}
+            placeholder="Stock"
+            className="insertStock"
+          />
+          <button type="submit" className="insert-button">Inserisci</button>
+        </form>
+      )}
 
-
-      <form onSubmit={handleInsert} className="add-form">
-        <input
-          type="text"
-          value={title}
-         onChange={(e) => setTitle(e.target.value)} 
-          placeholder="Title"
-          className="insertTite"
-        /> 
-
-        <input
-          type="text"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)} 
-          placeholder="Author"
-          className="insertAuthor"
-        />
-
-        <input
-          type='number'
-          value={published_year ?? ''}
-          onChange={(e) => setPublished_year(Number(e.target.value))}
-          placeholder="Published_Year"
-          className="insertPublished_Year"
-        />
-
-        <input
-          type="text"
-          value={genre ?? ''}
-          onChange={(e) => setGenre(e.target.value)} 
-          placeholder="Genre"
-          className="insertGenre"
-        />
-
-        <input
-          type='number'
-          value={stock ?? ''}
-          onChange={(e) => setStock(Number(e.target.value))}
-          placeholder="Stock"
-          className="insertStock"
-        />
-
-
-        <button type="submit" className="insert-button" >Inserisci</button>
-
-      </form>
+      {isEditFormVisible && editingBook && (
+        <div className="edit-form-overlay">
+          <div className="edit-form-container">
+            <h2 className='modificaLibro'>Modifica Libro</h2>
+            <form onSubmit={handleEdit} className="edit-form">
+              <input
+                type="text"
+                value={editingBook.title}
+                onChange={(e) => setEditingBook({...editingBook, title: e.target.value})}
+                placeholder="Title"
+                className="editTitle"
+              /> 
+              <input
+                type="text"
+                value={editingBook.author}
+                onChange={(e) => setEditingBook({...editingBook, author: e.target.value})}
+                placeholder="Author"
+                className="editAuthor"
+              />
+              <input
+                type='number'
+                value={editingBook.published_year ?? ''}
+                onChange={(e) => setEditingBook({...editingBook, published_year: Number(e.target.value)})}
+                placeholder="Published Year"
+                className="editPublished_Year"
+              />
+              <input
+                type="text"
+                value={editingBook.genre ?? ''}
+                onChange={(e) => setEditingBook({...editingBook, genre: e.target.value})}
+                placeholder="Genre"
+                className="editGenre"
+              />
+              <input
+                type='number'
+                value={editingBook.stock ?? ''}
+                onChange={(e) => setEditingBook({...editingBook, stock: Number(e.target.value)})}
+                placeholder="Stock"
+                className="editStock"
+              />
+              <button type="submit" className="edit-button">Salva Modifiche</button>
+              <button type="button" onClick={() => setIsEditFormVisible(false)} className="cancel-button">Annulla</button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {renderBooks()}
     </div>
   );
 };
+
 export default BookList;

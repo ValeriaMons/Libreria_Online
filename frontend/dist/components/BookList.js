@@ -1,9 +1,14 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import './BookList.css';
-
-
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -40,27 +45,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import './BookList.css';
 var BookList = function () {
-    var _a = useState([]), books = _a[0], setBooks = _a[1];
-    var _b = useState(''), searchTerm = _b[0], setSearchTerm = _b[1];
-    var _c = useState([]), searchResults = _c[0], setSearchResults = _c[1];
-    var _d = useState(false), isSearching = _d[0], setIsSearching = _d[1];
-    var _e = useState(''), title = _e[0], setTitle = _e[1];
-    var _f = useState(''), author = _f[0], setAuthor = _f[1];
-    var _g = useState(null), published_year = _g[0], setPublished_year = _g[1];
-    var _h = useState(null), genre = _h[0], setGenre = _h[1];
-    var _j = useState(null), stock = _j[0], setStock = _j[1];
+    var _a, _b, _c, _d, _e, _f;
+    var _g = useState([]), books = _g[0], setBooks = _g[1];
+    var _h = useState(''), searchTerm = _h[0], setSearchTerm = _h[1];
+    var _j = useState([]), searchResults = _j[0], setSearchResults = _j[1];
+    var _k = useState(false), isSearching = _k[0], setIsSearching = _k[1];
+    var _l = useState(false), isInsertFormVisible = _l[0], setIsInsertFormVisible = _l[1];
+    var _m = useState(false), isEditFormVisible = _m[0], setIsEditFormVisible = _m[1];
+    var _o = useState({
+        title: '',
+        author: '',
+        published_year: null,
+        genre: '',
+        stock: null
+    }), newBook = _o[0], setNewBook = _o[1];
+    var _p = useState(null), editingBook = _p[0], setEditingBook = _p[1];
     useEffect(function () {
         fetchBooks();
     }, []);
     var fetchBooks = function () { return __awaiter(void 0, void 0, void 0, function () {
         var response, error_1;
         return __generator(this, function (_a) {
-            // eslint-disable-next-line default-case
             switch (_a.label) {
                 case 0:
-                    // eslint-disable-next-line no-sparse-arrays
                     _a.trys.push([0, 2, , 3]);
                     return [4 /*yield*/, axios.get('http://localhost:5000/books')];
                 case 1:
@@ -85,44 +97,67 @@ var BookList = function () {
         setSearchResults(results);
     };
     var handleInsert = function (e) { return __awaiter(void 0, void 0, void 0, function () {
-        var response, error_2;
+        var error_2;
         return __generator(this, function (_a) {
-            // eslint-disable-next-line default-case
             switch (_a.label) {
                 case 0:
                     e.preventDefault();
                     _a.label = 1;
-                // eslint-disable-next-line no-fallthrough
                 case 1:
-                    // eslint-disable-next-line no-sparse-arrays
                     _a.trys.push([1, 3, , 4]);
-                    console.log('Sending POST request to http://localhost:5000/books');
-                    return [4 /*yield*/, axios.post('http://localhost:5000/books', {
-                            title: title,
-                            author: author,
-                            published_year: published_year,
-                            genre: genre,
-                            stock: stock
-                        })];
+                    return [4 /*yield*/, axios.post('http://localhost:5000/books', newBook)];
                 case 2:
-                    response = _a.sent();
-                    console.log('Risposta dal server:', response.data);
-                    setTitle('');
-                    setAuthor('');
-                    setPublished_year(Number || null);
-                    setGenre('' || null);
-                    setStock(Number || null);
+                    _a.sent();
+                    setNewBook({
+                        title: '',
+                        author: '',
+                        published_year: null,
+                        genre: '',
+                        stock: null
+                    });
+                    setIsInsertFormVisible(false);
+                    fetchBooks();
                     return [3 /*break*/, 4];
                 case 3:
                     error_2 = _a.sent();
-                    console.error('Errore nella creazione del libro:', error_2);
+                    console.error('Errore nell\'inserimento del libro:', error_2);
                     return [3 /*break*/, 4];
-                case 4:
-                    window.location.reload();
-                    return [2 /*return*/];
+                case 4: return [2 /*return*/];
             }
         });
     }); };
+    var handleEdit = function (e) { return __awaiter(void 0, void 0, void 0, function () {
+        var error_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    e.preventDefault();
+                    if (!editingBook)
+                        return [2 /*return*/];
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, axios.put("http://localhost:5000/books/".concat(editingBook.id), editingBook)];
+                case 2:
+                    _a.sent();
+                    setIsEditFormVisible(false);
+                    fetchBooks();
+                    return [3 /*break*/, 4];
+                case 3:
+                    error_3 = _a.sent();
+                    console.error('Errore nella modifica del libro:', error_3);
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    }); };
+    var toggleInsertForm = function () {
+        setIsInsertFormVisible(!isInsertFormVisible);
+    };
+    var openEditForm = function (book) {
+        setEditingBook(__assign({}, book));
+        setIsEditFormVisible(true);
+    };
     var handleInputChange = function (event) {
         setSearchTerm(event.target.value);
         if (event.target.value === '') {
@@ -131,12 +166,10 @@ var BookList = function () {
         }
     };
     var handleDelete = function (id) { return __awaiter(void 0, void 0, void 0, function () {
-        var error_3;
+        var error_4;
         return __generator(this, function (_a) {
-            // eslint-disable-next-line default-case
             switch (_a.label) {
                 case 0:
-                    // eslint-disable-next-line no-sparse-arrays
                     _a.trys.push([0, 3, , 4]);
                     return [4 /*yield*/, axios.delete("http://localhost:5000/books/".concat(id))];
                 case 1:
@@ -146,8 +179,8 @@ var BookList = function () {
                     _a.sent();
                     return [3 /*break*/, 4];
                 case 3:
-                    error_3 = _a.sent();
-                    console.error('Errore durante l\'eliminazione del libro:', error_3);
+                    error_4 = _a.sent();
+                    console.error('Errore durante l\'eliminazione del libro:', error_4);
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
             }
@@ -158,8 +191,8 @@ var BookList = function () {
         if (booksToRender.length === 0) {
             return _jsx("p", { children: "Nessun libro trovato." });
         }
-        return (_jsx("ul", { className: "books-grid", children: booksToRender.map(function (book) { return (_jsxs("li", { className: "book-item", children: [_jsx("h3", { children: book.title }), _jsxs("p", { children: ["Autore: ", book.author] }), _jsxs("p", { children: ["Anno di pubblicazione: ", book.published_year] }), _jsxs("p", { children: ["Genere: ", book.genre] }), _jsxs("p", { children: ["Copie disponibili: ", book.stock] }), _jsx("button", { className: 'deleteButton', onClick: function () { return handleDelete(book.id); }, children: "Elimina" })] }, book.id)); }) }));
+        return (_jsx("ul", { className: "books-grid", children: booksToRender.map(function (book) { return (_jsxs("li", { className: "book-item", children: [_jsx("h3", { children: book.title }), _jsxs("p", { children: ["Autore: ", book.author] }), _jsxs("p", { children: ["Anno di pubblicazione: ", book.published_year] }), _jsxs("p", { children: ["Genere: ", book.genre] }), _jsxs("p", { children: ["Copie disponibili: ", book.stock] }), _jsx("button", { className: 'editButton', onClick: function () { return openEditForm(book); }, children: "Modifica" }), _jsx("button", { className: 'deleteButton', onClick: function () { return handleDelete(book.id); }, children: "Elimina" })] }, book.id)); }) }));
     };
-    return (_jsxs("div", { className: "book-list", children: [_jsx("h1", { className: 'title-document', children: "Libreria Online" }), _jsxs("form", { onSubmit: handleSearch, className: "search-form", children: [_jsx("input", { type: "text", value: searchTerm, onChange: handleInputChange, placeholder: "Cerca per titolo o autore", className: "search-input" }), _jsx("button", { type: "submit", className: "search-button", children: "Cerca" })] }), _jsxs("form", { onSubmit: handleInsert, className: "add-form", children: [_jsx("input", { type: "text", value: title, onChange: function (e) { return setTitle(e.target.value); }, placeholder: "Title", className: "insertTite" }), _jsx("input", { type: "text", value: author, onChange: function (e) { return setAuthor(e.target.value); }, placeholder: "Author", className: "insertAuthor" }), _jsx("input", { type: 'number', value: published_year !== null && published_year !== void 0 ? published_year : '', onChange: function (e) { return setPublished_year(Number(e.target.value)); }, placeholder: "Published_Year", className: "insertPublished_Year" }), _jsx("input", { type: "text", value: genre !== null && genre !== void 0 ? genre : '', onChange: function (e) { return setGenre(e.target.value); }, placeholder: "Genre", className: "insertGenre" }), _jsx("input", { type: 'number', value: stock !== null && stock !== void 0 ? stock : '', onChange: function (e) { return setStock(Number(e.target.value)); }, placeholder: "Stock", className: "insertStock" }), _jsx("button", { type: "submit", className: "insert-button", children: "Inserisci" })] }), renderBooks()] }));
+    return (_jsxs("div", { className: "book-list", children: [_jsx("h1", { className: 'title-document', children: "Libreria Online" }), _jsxs("form", { onSubmit: handleSearch, className: "search-form", children: [_jsx("input", { type: "text", value: searchTerm, onChange: handleInputChange, placeholder: "Cerca per titolo o autore", className: "search-input" }), _jsx("button", { type: "submit", className: "search-button", children: "Cerca" })] }), _jsx("button", { onClick: toggleInsertForm, className: "mostra-button", children: isInsertFormVisible ? 'Nascondi' : 'Inserisci Nuovo Libro' }), isInsertFormVisible && (_jsxs("form", { onSubmit: handleInsert, className: "add-form", children: [_jsx("input", { type: "text", value: newBook.title, onChange: function (e) { return setNewBook(__assign(__assign({}, newBook), { title: e.target.value })); }, placeholder: "Title", className: "insertTitle" }), _jsx("input", { type: "text", value: newBook.author, onChange: function (e) { return setNewBook(__assign(__assign({}, newBook), { author: e.target.value })); }, placeholder: "Author", className: "insertAuthor" }), _jsx("input", { type: 'number', value: (_a = newBook.published_year) !== null && _a !== void 0 ? _a : '', onChange: function (e) { return setNewBook(__assign(__assign({}, newBook), { published_year: Number(e.target.value) })); }, placeholder: "Published Year", className: "insertPublished_Year" }), _jsx("input", { type: "text", value: (_b = newBook.genre) !== null && _b !== void 0 ? _b : '', onChange: function (e) { return setNewBook(__assign(__assign({}, newBook), { genre: e.target.value })); }, placeholder: "Genre", className: "insertGenre" }), _jsx("input", { type: 'number', value: (_c = newBook.stock) !== null && _c !== void 0 ? _c : '', onChange: function (e) { return setNewBook(__assign(__assign({}, newBook), { stock: Number(e.target.value) })); }, placeholder: "Stock", className: "insertStock" }), _jsx("button", { type: "submit", className: "insert-button", children: "Inserisci" })] })), isEditFormVisible && editingBook && (_jsx("div", { className: "edit-form-overlay", children: _jsxs("div", { className: "edit-form-container", children: [_jsx("h2", { className: 'modificaLibro', children: "Modifica Libro" }), _jsxs("form", { onSubmit: handleEdit, className: "edit-form", children: [_jsx("input", { type: "text", value: editingBook.title, onChange: function (e) { return setEditingBook(__assign(__assign({}, editingBook), { title: e.target.value })); }, placeholder: "Title", className: "editTitle" }), _jsx("input", { type: "text", value: editingBook.author, onChange: function (e) { return setEditingBook(__assign(__assign({}, editingBook), { author: e.target.value })); }, placeholder: "Author", className: "editAuthor" }), _jsx("input", { type: 'number', value: (_d = editingBook.published_year) !== null && _d !== void 0 ? _d : '', onChange: function (e) { return setEditingBook(__assign(__assign({}, editingBook), { published_year: Number(e.target.value) })); }, placeholder: "Published Year", className: "editPublished_Year" }), _jsx("input", { type: "text", value: (_e = editingBook.genre) !== null && _e !== void 0 ? _e : '', onChange: function (e) { return setEditingBook(__assign(__assign({}, editingBook), { genre: e.target.value })); }, placeholder: "Genre", className: "editGenre" }), _jsx("input", { type: 'number', value: (_f = editingBook.stock) !== null && _f !== void 0 ? _f : '', onChange: function (e) { return setEditingBook(__assign(__assign({}, editingBook), { stock: Number(e.target.value) })); }, placeholder: "Stock", className: "editStock" }), _jsx("button", { type: "submit", className: "edit-button", children: "Salva Modifiche" }), _jsx("button", { type: "button", onClick: function () { return setIsEditFormVisible(false); }, className: "cancel-button", children: "Annulla" })] })] }) })), renderBooks()] }));
 };
 export default BookList;
