@@ -1,5 +1,7 @@
-import { Request, Response } from 'express';
-import  {BookshopModels}  from '../models/bookshopModels'; //{BookShopServices}
+import { NextFunction, Request, Response } from 'express';
+import  {BookshopModels}  from '../models/bookshopModels';
+import  errorHandler  from '../middleware/errorHandler';
+import {validateBook} from '../middleware/validation-handler';
 
 export class BookControllers {
     private bookshopModels: BookshopModels;
@@ -8,19 +10,20 @@ export class BookControllers {
         this.bookshopModels = new BookshopModels();
     }
 
-    getBooks = async (req: Request, res: Response) => {
+    getBooks = async (req: Request, res: Response, next: NextFunction) => {
         try{
             const books = await this.bookshopModels.getBooks();
             res.json(books);
         }catch(error){
-            res.status(500).json({error: 'Errore nel recupero dei libri'});
+              next(error);
         }
     }
 
-    createNewBook = async (req: Request, res: Response) => {
+    createNewBook = async (req: Request, res: Response, next: NextFunction) => {
     
         try {
         
+            validateBook(req.body);
             const { title, author, published_year, genre, stock } = req.body;
       
             const newBook = await this.bookshopModels.createNewBook({
@@ -34,16 +37,16 @@ export class BookControllers {
       
             res.status(201).json(newBook);
           } catch (error) {
-            console.error('Errore nell\'aggiunta del libro:', error);
-            res.status(500).json({ 
-              message: 'Errore nell\'aggiunta del libro', 
-              error: error instanceof Error ? error.message : String(error)
-            });
+           console.error("Error caught in getBooks", error);
+        //    res.status(500).json({error: "Errore nell'aggiunta del libro"});
+           errorHandler(res,error);
           }
     }
 
-    updateBook = async (req: Request, res: Response) => {
+    updateBook = async (req: Request, res: Response, next: NextFunction) => {
         try {
+
+            validateBook(req.body);
             const updateBook = await this.bookshopModels.updateBook(req.body);
             if(updateBook)
             {
@@ -52,7 +55,7 @@ export class BookControllers {
                 res.status(404).json({error: 'Libro non trovato'});
             }
         } catch(error) {
-            res.status(505).json({error: 'Errore nell\'aggiornamento del libro'});
+            next(error);
         }
     };
 

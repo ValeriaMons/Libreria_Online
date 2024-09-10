@@ -16,7 +16,8 @@ app.use((req, res, next) => {
     next();
 });
 app.use('/books', routes_1.bookRoutes);
-app.use(errorHandler_1.default);
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+app.use(errorHandler_1.default);
+//# sourceMappingURL=server.js.map

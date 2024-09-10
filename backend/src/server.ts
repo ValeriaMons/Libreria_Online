@@ -20,8 +20,10 @@ app.use('/books', bookRoutes);
 
 
 
-app.use(errorHandler);
+
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+app.use(errorHandler);

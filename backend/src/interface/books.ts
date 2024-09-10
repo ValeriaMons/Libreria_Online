@@ -6,3 +6,4 @@ export interface Book{
     genre: string | null;
     stock: number;
 }
+

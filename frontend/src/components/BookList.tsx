@@ -151,6 +151,7 @@ const BookList: React.FC = () => {
             onChange={(e) => setNewBook({...newBook, title: e.target.value})}
             placeholder="Title"
             className="insertTitle"
+            required
           /> 
           <input
             type="text"
@@ -158,6 +159,7 @@ const BookList: React.FC = () => {
             onChange={(e) => setNewBook({...newBook, author: e.target.value})}
             placeholder="Author"
             className="insertAuthor"
+            required
           />
           <input
             type='number'
@@ -165,6 +167,9 @@ const BookList: React.FC = () => {
             onChange={(e) => setNewBook({...newBook, published_year: Number(e.target.value)})}
             placeholder="Published Year"
             className="insertPublished_Year"
+            min="0"
+            max="2024"
+            required
           />
           <input
             type="text"
@@ -195,6 +200,7 @@ const BookList: React.FC = () => {
                 onChange={(e) => setEditingBook({...editingBook, title: e.target.value})}
                 placeholder="Title"
                 className="editTitle"
+                required
               /> 
               <input
                 type="text"
@@ -202,6 +208,7 @@ const BookList: React.FC = () => {
                 onChange={(e) => setEditingBook({...editingBook, author: e.target.value})}
                 placeholder="Author"
                 className="editAuthor"
+                required
               />
               <input
                 type='number'
@@ -209,6 +216,9 @@ const BookList: React.FC = () => {
                 onChange={(e) => setEditingBook({...editingBook, published_year: Number(e.target.value)})}
                 placeholder="Published Year"
                 className="editPublished_Year"
+                min="0"
+                max="2024"
+                required
               />
               <input
                 type="text"

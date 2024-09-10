@@ -8,32 +8,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookControllers = void 0;
-const bookshopServices_1 = require("../services/bookshopServices"); //{BookShopServices}
+const bookshopModels_1 = require("../models/bookshopModels");
+const errorHandler_1 = __importDefault(require("../middleware/errorHandler"));
+const validation_handler_1 = require("../middleware/validation-handler");
 class BookControllers {
     constructor() {
-        this.get = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getBooks = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const books = yield this.bookshopServices.get();
+                const books = yield this.bookshopModels.getBooks();
                 res.json(books);
             }
             catch (error) {
-                res.status(500).json({ error: 'Errore nel recupero dei libri' });
+                next(error);
             }
         });
-        this.post = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.createNewBook = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Received request body:', req.body); // Log del body ricevuto
-                // Validazione base
-                if (!req.body || typeof req.body !== 'object') {
-                    return res.status(400).json({ message: 'Invalid request body' });
-                }
+                (0, validation_handler_1.validateBook)(req.body);
                 const { title, author, published_year, genre, stock } = req.body;
-                if (!title || !author) {
-                    return res.status(400).json({ message: 'Title and author are required' });
-                }
-                const newBook = yield this.bookshopServices.post({
+                const newBook = yield this.bookshopModels.createNewBook({
                     title,
                     author,
                     published_year: published_year ? parseInt(published_year) : null,
@@ -44,16 +42,15 @@ class BookControllers {
                 res.status(201).json(newBook);
             }
             catch (error) {
-                console.error('Errore nell\'aggiunta del libro:', error);
-                res.status(500).json({
-                    message: 'Errore nell\'aggiunta del libro',
-                    error: error instanceof Error ? error.message : String(error)
-                });
+                console.error("Error caught in getBooks", error);
+                //    res.status(500).json({error: "Errore nell'aggiunta del libro"});
+                (0, errorHandler_1.default)(res, error);
             }
         });
-        this.put = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.updateBook = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const updateBook = yield this.bookshopServices.put(parseInt(req.params.id), req.body);
+                (0, validation_handler_1.validateBook)(req.body);
+                const updateBook = yield this.bookshopModels.updateBook(req.body);
                 if (updateBook) {
                     res.json(updateBook);
                 }
@@ -62,12 +59,12 @@ class BookControllers {
                 }
             }
             catch (error) {
-                res.status(505).json({ error: 'Errore nell\'aggiornamento del libro' });
+                next(error);
             }
         });
-        this.delete = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.deleteBook = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const deleteBook = yield this.bookshopServices.delete(parseInt(req.params.id));
+                const deleteBook = yield this.bookshopModels.deleteBook(parseInt(req.params.id));
                 if (deleteBook) {
                     res.status(204).send();
                 }
@@ -79,7 +76,8 @@ class BookControllers {
                 res.status(500).json({ error: 'Errore nella rimozione del libro' });
             }
         });
-        this.bookshopServices = new bookshopServices_1.BookshopServices();
+        this.bookshopModels = new bookshopModels_1.BookshopModels();
     }
 }
 exports.BookControllers = BookControllers;
+//# sourceMappingURL=bookshopControllers.js.map

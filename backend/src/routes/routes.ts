@@ -1,6 +1,4 @@
-//const  expressRoutes = require('express');
-//const router = expressRoutes.Router();
-//const bookshopController = require('../controllers/bookshopControllers');
+
 
 import { Router } from 'express';
 import { BookControllers } from '../controllers/bookshopControllers';
@@ -8,10 +6,10 @@ import { BookControllers } from '../controllers/bookshopControllers';
 const router = Router();
 const bookshopController = new (BookControllers);
 
-router.get('/', bookshopController.get);
-router.post('/', bookshopController.post);
-router.put('/:id', bookshopController.put);
-router.delete('/:id', bookshopController.delete);
+router.get('/', bookshopController.createNewBook);
+router.post('/', bookshopController.createNewBook);
+router.put('/:id', bookshopController.updateBook);
+router.delete('/:id', bookshopController.deleteBook);
 
 
 export const bookRoutes = router;
