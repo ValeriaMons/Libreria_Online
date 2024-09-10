@@ -5,7 +5,7 @@ const express_1 = require("express");
 const bookshopControllers_1 = require("../controllers/bookshopControllers");
 const router = (0, express_1.Router)();
 const bookshopController = new (bookshopControllers_1.BookControllers);
-router.get('/', bookshopController.createNewBook);
+router.get('/', bookshopController.getBooks);
 router.post('/', bookshopController.createNewBook);
 router.put('/:id', bookshopController.updateBook);
 router.delete('/:id', bookshopController.deleteBook);

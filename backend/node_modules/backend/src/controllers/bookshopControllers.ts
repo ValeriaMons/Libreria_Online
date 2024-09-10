@@ -10,12 +10,16 @@ export class BookControllers {
         this.bookshopModels = new BookshopModels();
     }
 
-    getBooks = async (req: Request, res: Response, next: NextFunction) => {
+    getBooks = async (req: Request, res: Response) => {
+        console.log('la richiesta è: ', req);
         try{
             const books = await this.bookshopModels.getBooks();
+            console.log('I libri scraricti al primo caricamento sono: ', books)
             res.json(books);
         }catch(error){
-              next(error);
+            console.error("Error caught in getBooks", error);
+            //    res.status(500).json({error: "Errore nell'aggiunta del libro"});
+              errorHandler(res,error);
         }
     }
 
@@ -43,7 +47,7 @@ export class BookControllers {
           }
     }
 
-    updateBook = async (req: Request, res: Response, next: NextFunction) => {
+    updateBook = async (req: Request, res: Response) => {
         try {
 
             validateBook(req.body);
@@ -55,7 +59,9 @@ export class BookControllers {
                 res.status(404).json({error: 'Libro non trovato'});
             }
         } catch(error) {
-            next(error);
+            console.error("Error caught in getBooks", error);
+        //    res.status(500).json({error: "Errore nell'aggiunta del libro"});
+           errorHandler(res,error);
         }
     };
 
