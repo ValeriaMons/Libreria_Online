@@ -1,39 +1,29 @@
 import { Request, Response } from 'express';
-import  {BookshopServices}  from '../services/bookshopServices'; //{BookShopServices}
+import  {BookshopModels}  from '../models/bookshopModels'; //{BookShopServices}
 
 export class BookControllers {
-    private bookshopServices: BookshopServices;
+    private bookshopModels: BookshopModels;
 
     constructor() {
-        this.bookshopServices = new BookshopServices();
+        this.bookshopModels = new BookshopModels();
     }
 
-    get = async (req: Request, res: Response) => {
+    getBooks = async (req: Request, res: Response) => {
         try{
-            const books = await this.bookshopServices.get();
+            const books = await this.bookshopModels.getBooks();
             res.json(books);
         }catch(error){
             res.status(500).json({error: 'Errore nel recupero dei libri'});
         }
     }
 
-    post = async (req: Request, res: Response) => {
+    createNewBook = async (req: Request, res: Response) => {
     
         try {
-            console.log('Received request body:', req.body); // Log del body ricevuto
-      
-            // Validazione base
-            if (!req.body || typeof req.body !== 'object') {
-              return res.status(400).json({ message: 'Invalid request body' });
-            }
-      
+        
             const { title, author, published_year, genre, stock } = req.body;
       
-            if (!title || !author) {
-              return res.status(400).json({ message: 'Title and author are required' });
-            }
-      
-            const newBook = await this.bookshopServices.post({
+            const newBook = await this.bookshopModels.createNewBook({
                 title,
                 author,
                 published_year: published_year ? parseInt(published_year) : null,
@@ -52,9 +42,9 @@ export class BookControllers {
           }
     }
 
-    put = async (req: Request, res: Response) => {
+    updateBook = async (req: Request, res: Response) => {
         try {
-            const updateBook = await this.bookshopServices.put(parseInt(req.params.id), req.body);
+            const updateBook = await this.bookshopModels.updateBook(req.body);
             if(updateBook)
             {
                 res.json(updateBook);
@@ -67,9 +57,9 @@ export class BookControllers {
     };
 
 
-    delete = async (req: Request, res: Response) => {
+    deleteBook = async (req: Request, res: Response) => {
         try {
-            const deleteBook = await this.bookshopServices.delete(parseInt(req.params.id));
+            const deleteBook = await this.bookshopModels.deleteBook(parseInt(req.params.id));
             if(deleteBook) {
                 res.status(204).send();
             } else {

@@ -11,14 +11,14 @@ const pool = new Pool({
 
 
 export const db = {
-    query: (text: string, params?: any[]) => pool.query(text, params),
-  };
-  
-  export const dbConnect = async () => {
-    try {
-      await pool.connect();
-      console.log('Connected to the database');
-    } catch (error) {
-      console.error('Error connecting to the database', error);
-    }
-  };
+  query: (text: string, params?: any[]) => pool.query(text, params),
+};
+      
+export const dbConnect = async () => {
+  try {
+    await pool.connect();
+    console.log('Connected to the database');
+  } catch (error) {
+    console.error('Error connecting to the database', error);
+  }
+};
