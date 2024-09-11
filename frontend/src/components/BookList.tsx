@@ -252,6 +252,7 @@ const BookList: React.FC = () => {
             min="0"
           />
           <button type="submit" className="insert-button">Inserisci</button>
+          <button type="button" onClick={() => setIsInsertFormVisible(false)} className="cancel-button">Annulla</button>
         </form>
       )}
 
