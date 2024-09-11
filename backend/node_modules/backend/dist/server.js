@@ -10,7 +10,11 @@ const morgan_1 = __importDefault(require("morgan"));
 const routes_1 = require("./routes/routes");
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
-app.use((0, cors_1.default)());
+const corsOptions = {
+    origin: 'http://localhost:3000', // L'URL del tuo frontend
+    optionsSuccessStatus: 200 // Per browser legacy che non supportano CORS
+};
+app.use((0, cors_1.default)(corsOptions));
 app.use((0, helmet_1.default)());
 app.use((0, morgan_1.default)('dev'));
 app.use(express_1.default.json());
