@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
-import  {BookshopModels}  from '../models/bookshopModels';
-import  errorHandler  from '../middleware/errorHandler';
-import {validateBook} from '../middleware/validation-handler';
+import { Request, Response } from 'express';
+import { BookshopModels } from '../models/bookshopModels';
+import { validateBook } from '../middleware/validation-handler';
+import errorHandler from '../middleware/errorHandler';
 
 export class BookControllers {
     private bookshopModels: BookshopModels;
@@ -11,74 +11,58 @@ export class BookControllers {
     }
 
     getBooks = async (req: Request, res: Response) => {
-        console.log('la richiesta è: ', req);
-        try{
+        try {
             const books = await this.bookshopModels.getBooks();
-            console.log('I libri scraricti al primo caricamento sono: ', books)
             res.json(books);
-        }catch(error){
-            console.error("Error caught in getBooks", error);
-            //    res.status(500).json({error: "Errore nell'aggiunta del libro"});
-              errorHandler(res,error);
+        } catch (error) {
+            console.error("Error in getBooks:", error);
+            errorHandler(res, error);
         }
     }
 
-    createNewBook = async (req: Request, res: Response, next: NextFunction) => {
-    
+    createNewBook = async (req: Request, res: Response) => {
         try {
-        
             validateBook(req.body);
-            const { title, author, published_year, genre, stock } = req.body;
-      
-            const newBook = await this.bookshopModels.createNewBook({
-                title,
-                author,
-                published_year: published_year ? parseInt(published_year) : null,
-                genre: genre || null,
-                stock: stock ? parseInt(stock) : 0,
-                id: 0
-            });
-      
+            const newBook = await this.bookshopModels.createNewBook(req.body);
             res.status(201).json(newBook);
-          } catch (error) {
-           console.error("Error caught in getBooks", error);
-        //    res.status(500).json({error: "Errore nell'aggiunta del libro"});
-           errorHandler(res,error);
-          }
+        } catch (error) {
+            console.error("Error in createNewBook:", error);
+            errorHandler(res, error);
+        }
     }
 
     updateBook = async (req: Request, res: Response) => {
         try {
-
-            validateBook(req.body);
-            const updateBook = await this.bookshopModels.updateBook(req.body);
-            if(updateBook)
-            {
-                res.json(updateBook);
-            }else {
-                res.status(404).json({error: 'Libro non trovato'});
+            const bookId = parseInt(req.params.id, 10); // Estrai l'ID del libro dall'URL
+            const bookData = req.body;
+    
+            validateBook(bookData);
+    
+            // Passa l'ID del libro separatamente dai dati del libro
+            const updatedBook = await this.bookshopModels.updateBook(bookId, bookData);
+    
+            if (updatedBook) {
+                res.json(updatedBook);
+            } else {
+                res.status(404).json({ error: 'Libro non trovato' });
             }
-        } catch(error) {
-            console.error("Error caught in getBooks", error);
-        //    res.status(500).json({error: "Errore nell'aggiunta del libro"});
-           errorHandler(res,error);
+        } catch (error) {
+            console.error("Error in updateBook:", error);
+            errorHandler(res, error);
         }
-    };
-
+    }
 
     deleteBook = async (req: Request, res: Response) => {
         try {
-            const deleteBook = await this.bookshopModels.deleteBook(parseInt(req.params.id));
-            if(deleteBook) {
+            const deleted = await this.bookshopModels.deleteBook(parseInt(req.params.id));
+            if (deleted) {
                 res.status(204).send();
             } else {
-                res.status(404).json({error: 'Libro non trovato'});
+                res.status(404).json({ error: 'Libro non trovato' });
             }
-        } catch(error) {
-            res.status(500).json({error: 'Errore nella rimozione del libro'});
+        } catch (error) {
+            console.error("Error in deleteBook:", error);
+            errorHandler(res, error);
         }
-    };
-
+    }
 }
-
-

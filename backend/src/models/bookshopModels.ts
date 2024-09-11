@@ -19,14 +19,12 @@ export class BookshopModels {
         return rows[0];
     }
 
-
-    async updateBook (bookToUpdate: Partial<Book>): Promise<Book | null>{
+    async updateBook (id: number, book: Partial<Book>): Promise<Book | null>{
       const query = 'UPDATE books SET title = $1, author = $2, published_year = $3, genre = $4, stock = $5 WHERE id = $6 RETURNING *';
-      const values = [bookToUpdate.title, bookToUpdate.author, bookToUpdate.published_year, bookToUpdate.genre, bookToUpdate.stock];
+      const values = [book.title, book.author, book.published_year, book.genre, book.stock, id];
       const { rows } = await db.query(query, values);
       return rows[0] || null;
     }
-
 
     async deleteBook(id: number): Promise<boolean> {
       const query = 'DELETE FROM books WHERE id = $1';

@@ -1,29 +1,20 @@
 import express from 'express';
 import cors from 'cors';
-import {bookRoutes} from './routes/routes';
-//import errorHandler from './middleware/errorHandler';
-
+import helmet from 'helmet';
+import morgan from 'morgan';
+import { appRoutes } from './routes/routes';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
-
+app.use(helmet());
+app.use(morgan('dev'));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// app.use((req, res, next) => {
-//     console.log('Parsed request body:', req.body);
-//     next();
-//   });
-
-app.use('/books', bookRoutes);
-
-
-
-
+app.use('/api', appRoutes);
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
-
-
