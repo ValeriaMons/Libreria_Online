@@ -4,5 +4,5 @@ export interface Book {
     author: string;
     published_year: number | null;
     genre: string | null;
-    stock: number;
+    stock: number | null;
   }

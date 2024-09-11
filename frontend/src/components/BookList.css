@@ -85,7 +85,7 @@ body {
  
   color: #ffffff;
   font-style:inherit;
- 
+  text-align: center;
   font-size: 65px;
   font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
@@ -159,4 +159,17 @@ color: white;
 
 .modificaLibro{
   color: white;
+}
+
+.logout-button {
+  position : absolute;
+  top: 0%;
+  right: 0;
+
+}
+
+.mostra-button {
+  position:absolute;
+  top: 30%;
+  left: 760px;
 }
